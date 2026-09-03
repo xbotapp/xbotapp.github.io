@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>X-Bot Lib — Documentação MetaTrader</title>
+
+    <meta name="description"
+        content="Documentação oficial da X-Bot Lib para integração com MetaTrader 4 e MetaTrader 5.">
+
+    <style>
+        /* ============================================================
+           X-BOT DOCS
+           ============================================================ */
+
+        :root {
+            --bg: #0b0c10;
+            --bg-soft: #101117;
+            --surface: #15171f;
+            --surface-2: #1b1e27;
+            --surface-3: #222631;
+
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(156, 58, 255, 0.35);
+
+            --accent: #9c3aff;
+            --accent-soft: rgba(156, 58, 255, 0.12);
+            --accent-glow: rgba(156, 58, 255, 0.22);
+
+            --text: #e8eaf0;
+            --text-soft: #b1b5c3;
+            --text-muted: #7e8395;
+
+            --success: #00ff88;
+            --danger: #e74c3c;
+
+            --sidebar-width: 270px;
+            --header-height: 68px;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+
+            --max-width: 1480px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 70% -10%,
+                    rgba(156, 58, 255, 0.10),
+                    transparent 32%),
+                var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+            line-height: 1.7;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        ::selection {
+            background: rgba(156, 58, 255, 0.35);
+            color: #fff;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: var(--header-height);
+
+            z-index: 100;
+
+            display: flex;
+            align-items: center;
+
+            border-bottom: 1px solid var(--border);
+
+            background:
+                rgba(11, 12, 16, 0.82);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .header-inner {
+            width: 100%;
+            max-width: var(--max-width);
+
+            margin: 0 auto;
+
+            padding: 0 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-size: 17px;
+            font-weight: 750;
+            letter-spacing: -0.02em;
+
+            white-space: nowrap;
+        }
+
+        .brand-mark {
+            width: 30px;
+            height: 30px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(135deg,
+                    #b967ff,
+                    #7925e8);
+
+            box-shadow:
+                0 0 25px rgba(156, 58, 255, 0.28);
+        }
+
+        .brand-mark span {
+            font-size: 15px;
+            font-weight: 900;
+            color: white;
+        }
+
+        .brand-divider {
+            width: 1px;
+            height: 22px;
+
+            background: var(--border);
+
+            margin: 0 3px;
+        }
+
+        .brand-section {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .header-link {
+            padding: 7px 11px;
+
+            border-radius: 8px;
+
+            color: var(--text-soft);
+
+            font-size: 14px;
+            transition: 0.2s ease;
+        }
+
+        .header-link:hover {
+            color: white;
+            background: var(--surface);
+        }
+
+        .header-link.active {
+            color: white;
+            background: var(--accent-soft);
+        }
+
+        .mobile-menu {
+            display: none;
+
+            width: 38px;
+            height: 38px;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            color: var(--text);
+
+            background: var(--surface);
+
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           LAYOUT
+           ============================================================ */
+
+        .layout {
+            width: 100%;
+            max-width: var(--max-width);
+
+            margin: 0 auto;
+
+            padding-top: var(--header-height);
+
+            display: grid;
+            grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+        }
+
+        /* ============================================================
+           SIDEBAR
+           ============================================================ */
+
+        .sidebar {
+            position: sticky;
+            top: var(--header-height);
+
+            height: calc(100vh - var(--header-height));
+
+            padding: 30px 20px 40px 24px;
+
+            overflow-y: auto;
+
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--surface-3);
+            border-radius: 20px;
+        }
+
+        .sidebar-title {
+            margin-bottom: 20px;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+        }
+
+        .nav-group {
+            margin-bottom: 28px;
+        }
+
+        .nav-group-title {
+            margin: 0 0 7px 10px;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+
+            min-height: 39px;
+
+            padding: 8px 11px;
+
+            border-radius: 8px;
+
+            color: var(--text-soft);
+
+            font-size: 14px;
+
+            transition:
+                background 0.18s ease,
+                color 0.18s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: var(--accent-soft);
+        }
+
+        .nav-link.active::before {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+
+            width: 2px;
+
+            border-radius: 3px;
+
+            background: var(--accent);
+
+            box-shadow:
+                0 0 12px var(--accent-glow);
+        }
+
+        /* ============================================================
+           MAIN
+           ============================================================ */
+
+        main {
+            min-width: 0;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 920px;
+
+            margin: 0 auto;
+
+            padding: 52px 65px 100px;
+        }
+
+        /* ============================================================
+           BREADCRUMB
+           ============================================================ */
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            margin-bottom: 25px;
+
+            color: var(--text-muted);
+
+            font-size: 13px;
+        }
+
+        .breadcrumb-current {
+            color: var(--text-soft);
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.5;
+        }
+
+        /* ============================================================
+           PAGE HEADER
+           ============================================================ */
+
+        .page-header {
+            margin-bottom: 38px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            margin-bottom: 14px;
+            padding: 5px 10px;
+
+            border: 1px solid rgba(156, 58, 255, 0.25);
+            border-radius: 999px;
+
+            background: var(--accent-soft);
+
+            color: #c99cff;
+
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0 0 13px;
+
+            color: #fff;
+
+            font-size: clamp(34px, 4vw, 48px);
+            line-height: 1.1;
+
+            letter-spacing: -0.045em;
+        }
+
+        .lead {
+            max-width: 730px;
+
+            margin: 0;
+
+            color: var(--text-soft);
+
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        /* ============================================================
+           SECTIONS
+           ============================================================ */
+
+        section {
+            scroll-margin-top: 95px;
+
+            margin-top: 62px;
+        }
+
+        section:first-of-type {
+            margin-top: 0;
+        }
+
+        h2 {
+            margin: 0 0 18px;
+
+            color: #fff;
+
+            font-size: 25px;
+            line-height: 1.3;
+
+            letter-spacing: -0.025em;
+        }
+
+        h3 {
+            margin: 30px 0 9px;
+
+            color: #f5f5f8;
+
+            font-size: 17px;
+            line-height: 1.4;
+        }
+
+        p {
+            margin: 0 0 17px;
+
+            color: var(--text-soft);
+        }
+
+        strong {
+            color: #f1f2f6;
+            font-weight: 700;
+        }
+
+        code {
+            padding: 3px 6px;
+
+            border: 1px solid var(--border);
+            border-radius: 5px;
+
+            background: var(--surface);
+
+            color: #d5b3ff;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                "Liberation Mono",
+                monospace;
+
+            font-size: 0.88em;
+        }
+
+        /* ============================================================
+           INFO CARDS
+           ============================================================ */
+
+        .info-card {
+            margin: 25px 0;
+
+            padding: 20px 21px;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            background:
+                linear-gradient(135deg,
+                    rgba(156, 58, 255, 0.055),
+                    rgba(255, 255, 255, 0.015));
+        }
+
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            margin-bottom: 7px;
+
+            color: white;
+
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .info-card-title::before {
+            content: "";
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--accent);
+
+            box-shadow: 0 0 12px var(--accent);
+        }
+
+        .info-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ============================================================
+           FUNCTION CARDS
+           ============================================================ */
+
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+
+            margin: 25px 0;
+        }
+
+        .function-card {
+            padding: 19px;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            background: var(--surface);
+
+            transition:
+                transform 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .function-card:hover {
+            transform: translateY(-2px);
+
+            border-color: var(--border-hover);
+        }
+
+        .function-name {
+            margin-bottom: 5px;
+
+            color: #fff;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .function-description {
+            color: var(--text-muted);
+
+            font-size: 13px;
+        }
+
+        /* ============================================================
+           CODE
+           ============================================================ */
+
+        .code-wrapper {
+            position: relative;
+
+            margin: 20px 0 26px;
+
+            overflow: hidden;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            background: #0a0b0f;
+
+            box-shadow:
+                0 18px 50px rgba(0, 0, 0, 0.20);
+        }
+
+        .code-header {
+            height: 38px;
+
+            padding: 0 13px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid var(--border);
+
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .code-language {
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .copy-button {
+            border: 0;
+
+            padding: 5px 8px;
+
+            border-radius: 6px;
+
+            color: var(--text-muted);
+
+            background: transparent;
+
+            font-size: 11px;
+
+            cursor: pointer;
+
+            transition: 0.18s ease;
+        }
+
+        .copy-button:hover {
+            color: white;
+            background: var(--surface-2);
+        }
+
+        .copy-button.copied {
+            color: var(--success);
+        }
+
+        pre {
+            margin: 0;
+
+            padding: 20px;
+
+            overflow-x: auto;
+
+            color: #d5d8e1;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                "Liberation Mono",
+                monospace;
+
+            font-size: 13px;
+            line-height: 1.75;
+
+            tab-size: 4;
+        }
+
+        pre::-webkit-scrollbar {
+            height: 7px;
+        }
+
+        pre::-webkit-scrollbar-thumb {
+            background: var(--surface-3);
+            border-radius: 20px;
+        }
+
+        .kw {
+            color: #c792ea;
+        }
+
+        .type {
+            color: #82aaff;
+        }
+
+        .str {
+            color: #c3e88d;
+        }
+
+        .fn {
+            color: #82e2ff;
+        }
+
+        .comment {
+            color: #62687a;
+        }
+
+        /* ============================================================
+           TABLE
+           ============================================================ */
+
+        .table-wrapper {
+            margin: 22px 0 27px;
+
+            overflow-x: auto;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 13px 15px;
+
+            border-bottom: 1px solid var(--border);
+
+            text-align: left;
+        }
+
+        th {
+            color: #e8eaf0;
+
+            background: rgba(255, 255, 255, 0.025);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        td {
+            color: var(--text-soft);
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        /* ============================================================
+           LIST
+           ============================================================ */
+
+        ul,
+        ol {
+            margin: 15px 0 20px;
+            padding-left: 22px;
+
+            color: var(--text-soft);
+        }
+
+        li {
+            margin: 7px 0;
+        }
+
+        li::marker {
+            color: var(--accent);
+        }
+
+        /* ============================================================
+           VERSION CARDS
+           ============================================================ */
+
+        .version-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+
+            margin: 25px 0;
+        }
+
+        .version-card {
+            padding: 21px;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            background: var(--surface);
+        }
+
+        .version-card-title {
+            margin-bottom: 6px;
+
+            color: white;
+
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .version-card-file {
+            display: inline-block;
+
+            margin-top: 7px;
+
+            color: #c99cff;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+
+            font-size: 12px;
+        }
+
+        /* ============================================================
+           NEXT/PREV
+           ============================================================ */
+
+        .page-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 14px;
+
+            margin-top: 80px;
+            padding-top: 25px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .page-nav-card {
+            padding: 17px 18px;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            background: var(--surface);
+
+            transition: 0.2s ease;
+        }
+
+        .page-nav-card:hover {
+            border-color: var(--border-hover);
+            background: var(--surface-2);
+        }
+
+        .page-nav-card.next {
+            text-align: right;
+        }
+
+        .page-nav-label {
+            margin-bottom: 3px;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .page-nav-title {
+            color: white;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+
+        footer {
+            margin-top: 80px;
+            padding-top: 25px;
+
+            border-top: 1px solid var(--border);
+
+            color: var(--text-muted);
+
+            font-size: 12px;
+        }
+
+        /* ============================================================
+           MOBILE
+           ============================================================ */
+
+        @media (max-width: 900px) {
+            .header-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+
+                top: var(--header-height);
+                left: 0;
+                bottom: 0;
+
+                width: min(300px, 86vw);
+
+                z-index: 90;
+
+                background: rgba(15, 16, 21, 0.98);
+
+                transform: translateX(-100%);
+
+                transition: transform 0.25s ease;
+
+                box-shadow:
+                    20px 0 60px rgba(0, 0, 0, 0.35);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .content {
+                padding:
+                    40px 24px 80px;
+            }
+
+            .function-grid,
+            .version-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --header-height: 62px;
+            }
+
+            .header-inner {
+                padding: 0 17px;
+            }
+
+            .brand-section,
+            .brand-divider {
+                display: none;
+            }
+
+            .content {
+                padding:
+                    35px 18px 65px;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            .lead {
+                font-size: 15px;
+            }
+
+            section {
+                margin-top: 48px;
+            }
+
+            .page-navigation {
+                grid-template-columns: 1fr;
+            }
+
+            .page-nav-card.next {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <div class="header-inner">
+
+            <a class="brand" href="/">
+                <div class="brand-mark">
+                    <span>X</span>
+                </div>
+
+                <span>X-Bot</span>
+
+                <span class="brand-divider"></span>
+
+                <span class="brand-section">Docs</span>
+            </a>
+
+            <nav class="header-links">
+                <a class="header-link" href="/">Início</a>
+                <a class="header-link active" href="/docs/metatrader/">Documentação</a>
+                <a class="header-link" href="/docs/metatrader/installation">MetaTrader</a>
+            </nav>
+
+            <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu">
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <div class="layout">
+
+        <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="sidebar-title">
+                MetaTrader
+            </div>
+
+            <div class="nav-group">
+
+                <div class="nav-group-title">
+                    Começando
+                </div>
+
+                <a class="nav-link active" href="#introduction">
+                    Introdução
+                </a>
+
+                <a class="nav-link" href="#installation">
+                    Instalação
+                </a>
+
+            </div>
+
+
+            <div class="nav-group">
+
+                <div class="nav-group-title">
+                    API
+                </div>
+
+                <a class="nav-link" href="#send-signal">
+                    SendSignal
+                </a>
+
+                <a class="nav-link" href="#receive-signal">
+                    ReceiveSignal
+                </a>
+
+            </div>
+
+
+            <div class="nav-group">
+
+                <div class="nav-group-title">
+                    Plataformas
+                </div>
+
+                <a class="nav-link" href="#mql4">
+                    MQL4
+                </a>
+
+                <a class="nav-link" href="#mql5">
+                    MQL5
+                </a>
+
+            </div>
+
+
+            <div class="nav-group">
+
+                <div class="nav-group-title">
+                    Referência
+                </div>
+
+                <a class="nav-link" href="#complete-example">
+                    Exemplo completo
+                </a>
+
+                <a class="nav-link" href="#best-practices">
+                    Boas práticas
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ============================================================
+         MAIN
+         ============================================================ -->
+
+        <main>
+
+            <div class="content">
+
+                <div class="breadcrumb">
+                    <span>X-Bot</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span>Docs</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">MetaTrader</span>
+                </div>
+
+
+                <!-- ====================================================
+                 INTRODUCTION
+                 ==================================================== -->
+
+                <section id="introduction" data-title="Introdução">
+
+                    <div class="page-header">
+
+                        <div class="eyebrow">
+                            MetaTrader
+                        </div>
+
+                        <h1>X-Bot Lib</h1>
+
+                        <p class="lead">
+                            Integre seus projetos MQL4 e MQL5 ao X-Bot
+                            utilizando uma biblioteca simples para envio
+                            e recebimento de sinais.
+                        </p>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <div class="info-card-title">
+                            Integração simples
+                        </div>
+
+                        <p>
+                            A <strong>X-Bot Lib</strong> permite integrar
+                            seu projeto MetaTrader ao X-Bot sem a necessidade
+                            de implementar toda a comunicação diretamente
+                            no seu Expert Advisor ou indicador.
+                        </p>
+
+                    </div>
+
+
+                    <h2>Funções disponíveis</h2>
+
+                    <div class="function-grid">
+
+                        <div class="function-card">
+
+                            <div class="function-name">
+                                SendSignal()
+                            </div>
+
+                            <div class="function-description">
+                                Envia um sinal para o X-Bot.
+                            </div>
+
+                        </div>
+
+
+                        <div class="function-card">
+
+                            <div class="function-name">
+                                ReceiveSignal()
+                            </div>
+
+                            <div class="function-description">
+                                Recebe um sinal enviado pelo X-Bot.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <h2>Versões</h2>
+
+                    <div class="version-grid">
+
+                        <div class="version-card">
+
+                            <div class="version-card-title">
+                                MetaTrader 4
+                            </div>
+
+                            <p>
+                                Biblioteca para projetos desenvolvidos
+                                em MQL4.
+                            </p>
+
+                            <span class="version-card-file">
+                                X-Bot Lib.ex4
+                            </span>
+
+                        </div>
+
+
+                        <div class="version-card">
+
+                            <div class="version-card-title">
+                                MetaTrader 5
+                            </div>
+
+                            <p>
+                                Biblioteca para projetos desenvolvidos
+                                em MQL5.
+                            </p>
+
+                            <span class="version-card-file">
+                                X-Bot Lib.ex5
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================================
+                 INSTALLATION
+                 ==================================================== -->
+
+                <section id="installation" data-title="Instalação">
+
+                    <h2>Instalação</h2>
+
+                    <p>
+                        A instalação consiste em copiar a biblioteca
+                        correspondente para a pasta <code>Libraries</code>
+                        da instalação do MetaTrader.
+                    </p>
+
+
+                    <h3>MetaTrader 4</h3>
+
+                    <p>
+                        Utilize o arquivo:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Arquivo
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>X-Bot Lib.ex4</pre>
+
+                    </div>
+
+
+                    <p>
+                        Coloque o arquivo dentro da pasta:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Estrutura
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>MQL4
+└── Libraries
+    └── X-Bot Lib.ex4</pre>
+
+                    </div>
+
+
+                    <h3>MetaTrader 5</h3>
+
+                    <p>
+                        Utilize o arquivo:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Arquivo
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>X-Bot Lib.ex5</pre>
+
+                    </div>
+
+
+                    <p>
+                        Coloque o arquivo dentro da pasta:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Estrutura
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>MQL5
+└── Libraries
+    └── X-Bot Lib.ex5</pre>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <div class="info-card-title">
+                            Após a instalação
+                        </div>
+
+                        <p>
+                            Depois de copiar o arquivo para a pasta
+                            correspondente, a biblioteca estará disponível
+                            para utilização no seu projeto.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================================
+                 SEND SIGNAL
+                 ==================================================== -->
+
+                <section id="send-signal" data-title="SendSignal">
+
+                    <h2>SendSignal()</h2>
+
+                    <p>
+                        Use <strong>SendSignal()</strong> para enviar
+                        um sinal para o X-Bot.
+                    </p>
+
+
+                    <h3>Assinatura</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+
+                        </div>
+
+                        <pre>bool SendSignal(
+    string symbol,
+    string direction,
+    int duration,
+    string strategy
+);</pre>
+
+                    </div>
+
+
+                    <h3>Parâmetros</h3>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Parâmetro</th>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td><code>symbol</code></td>
+                                    <td>string</td>
+                                    <td>
+                                        Ativo relacionado ao sinal.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td><code>direction</code></td>
+                                    <td>string</td>
+                                    <td>
+                                        Direção do sinal.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td><code>duration</code></td>
+                                    <td>int</td>
+                                    <td>
+                                        Duração do sinal em segundos.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td><code>strategy</code></td>
+                                    <td>string</td>
+                                    <td>
+                                        Nome utilizado para identificar
+                                        a origem do sinal.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>symbol</h3>
+
+                    <p>
+                        Ativo relacionado ao sinal.
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Exemplos
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>EURUSD
+GBPUSD
+USDJPY</pre>
+
+                    </div>
+
+
+                    <h3>direction</h3>
+
+                    <p>
+                        Direção do sinal.
+                    </p>
+
+                    <p>
+                        Utilize:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Valores
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>CALL
+PUT</pre>
+
+                    </div>
+
+
+                    <h3>duration</h3>
+
+                    <p>
+                        Duração do sinal em segundos.
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Exemplo
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>60</pre>
+
+                    </div>
+
+
+                    <p>
+                        O valor acima representa 60 segundos.
+                    </p>
+
+
+                    <h3>strategy</h3>
+
+                    <p>
+                        Nome utilizado para identificar a origem do sinal.
+                        Você pode utilizar qualquer nome definido pelo
+                        seu projeto.
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Exemplos
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>my_strategy
+strategy_01
+custom_strategy
+signal_system</pre>
+
+                    </div>
+
+
+                    <h3>Retorno</h3>
+
+                    <p>
+                        A função retorna <strong>true</strong> quando o
+                        envio é realizado com sucesso.
+                    </p>
+
+                    <p>
+                        Em caso de falha, retorna <strong>false</strong>.
+                    </p>
+
+
+                    <h3>Exemplo</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>bool result = SendSignal(
+    "EURUSD",
+    "CALL",
+    60,
+    "my_strategy"
+);
+
+if(result)
+{
+    Print("Sinal enviado com sucesso.");
+}
+else
+{
+    Print("Não foi possível enviar o sinal.");
+}</pre>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================================
+                 RECEIVE SIGNAL
+                 ==================================================== -->
+
+                <section id="receive-signal" data-title="ReceiveSignal">
+
+                    <h2>ReceiveSignal()</h2>
+
+                    <p>
+                        Use <strong>ReceiveSignal()</strong> para receber
+                        um sinal enviado pelo X-Bot.
+                    </p>
+
+
+                    <h3>Assinatura</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+
+                        </div>
+
+                        <pre>string ReceiveSignal(int timeout);</pre>
+
+                    </div>
+
+
+                    <h3>timeout</h3>
+
+                    <p>
+                        Define por quanto tempo a função poderá aguardar
+                        por um sinal.
+                    </p>
+
+                    <p>
+                        O valor é informado em milissegundos.
+                    </p>
+
+
+                    <h3>Exemplo</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>string signal = ReceiveSignal(5000);</pre>
+
+                    </div>
+
+
+                    <p>
+                        Nesse exemplo, a função poderá aguardar até
+                        5 segundos.
+                    </p>
+
+
+                    <h3>Valor retornado</h3>
+
+                    <p>
+                        Quando um sinal é recebido, o resultado possui
+                        quatro valores separados por vírgula.
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Formato
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>EURUSD,CALL,60,my_strategy</pre>
+
+                    </div>
+
+
+                    <p>
+                        A ordem dos valores é:
+                    </p>
+
+                    <ol>
+                        <li>Symbol</li>
+                        <li>Direction</li>
+                        <li>Duration</li>
+                        <li>Strategy</li>
+                    </ol>
+
+
+                    <h3>Quando nenhum sinal é recebido</h3>
+
+                    <p>
+                        Se nenhum sinal for recebido dentro do período
+                        informado, a função retorna uma string vazia.
+                    </p>
+
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>string signal = ReceiveSignal(1000);
+
+if(signal == "")
+{
+    Print("Nenhum sinal recebido.");
+}</pre>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================================
+                 MQL4
+                 ==================================================== -->
+
+                <section id="mql4" data-title="MQL4">
+
+                    <h2>MQL4</h2>
+
+                    <p>
+                        Utilize <strong>X-Bot Lib.ex4</strong> com projetos
+                        desenvolvidos em MQL4.
+                    </p>
+
+
+                    <h3>Enviar sinal</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL4
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>bool result = SendSignal(
+    Symbol(),
+    "CALL",
+    60,
+    "my_strategy"
+);
+
+if(result)
+{
+    Print("Sinal enviado.");
+}</pre>
+
+                    </div>
+
+
+                    <h3>Receber sinal</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL4
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>string signal = ReceiveSignal(100);
+
+if(signal != "")
+{
+    Print(
+        "Sinal recebido: ",
+        signal
+    );
+}</pre>
+
+                    </div>
+
+
+                    <h3>Exemplo de resultado</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Resultado
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>EURUSD,CALL,60,my_strategy</pre>
+
+                    </div>
+
+
+                    <p>
+                        O texto recebido pode ser separado e utilizado
+                        pelo seu projeto conforme a necessidade.
+                    </p>
+
+                </section>
+
+
+                <!-- ====================================================
+                 MQL5
+                 ==================================================== -->
+
+                <section id="mql5" data-title="MQL5">
+
+                    <h2>MQL5</h2>
+
+                    <p>
+                        Utilize <strong>X-Bot Lib.ex5</strong> com projetos
+                        desenvolvidos em MQL5.
+                    </p>
+
+
+                    <h3>Enviar sinal</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL5
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>bool result = SendSignal(
+    _Symbol,
+    "CALL",
+    60,
+    "my_strategy"
+);
+
+if(result)
+{
+    Print("Sinal enviado.");
+}</pre>
+
+                    </div>
+
+
+                    <h3>Receber sinal</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL5
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>string signal = ReceiveSignal(100);
+
+if(signal != "")
+{
+    Print(
+        "Sinal recebido: ",
+        signal
+    );
+}</pre>
+
+                    </div>
+
+
+                    <h3>Exemplo de resultado</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Resultado
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>EURUSD,CALL,60,my_strategy</pre>
+
+                    </div>
+
+
+                    <p>
+                        O texto recebido pode ser separado e utilizado
+                        pelo seu projeto conforme a necessidade.
+                    </p>
+
+                </section>
+
+
+                <!-- ====================================================
+                 COMPLETE EXAMPLE
+                 ==================================================== -->
+
+                <section id="complete-example" data-title="Exemplo completo">
+
+                    <h2>Exemplo completo</h2>
+
+                    <p>
+                        O exemplo abaixo utiliza as duas funções da
+                        X-Bot Lib.
+                    </p>
+
+
+                    <h3>MQL4</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL4
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>bool SendMySignal()
+{
+    return SendSignal(
+        Symbol(),
+        "CALL",
+        60,
+        "my_strategy"
+    );
+}
+
+void CheckSignal()
+{
+    string signal =
+        ReceiveSignal(100);
+
+    if(signal == "")
+        return;
+
+    Print(
+        "Novo sinal: ",
+        signal
+    );
+}</pre>
+
+                    </div>
+
+
+                    <h3>MQL5</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL5
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>bool SendMySignal()
+{
+    return SendSignal(
+        _Symbol,
+        "CALL",
+        60,
+        "my_strategy"
+    );
+}
+
+void CheckSignal()
+{
+    string signal =
+        ReceiveSignal(100);
+
+    if(signal == "")
+        return;
+
+    Print(
+        "Novo sinal: ",
+        signal
+    );
+}</pre>
+
+                    </div>
+
+
+                    <h3>Exemplo recebido</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Sinal
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>EURUSD,PUT,60,my_strategy</pre>
+
+                    </div>
+
+
+                    <p>
+                        Os dados correspondem a:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Estrutura
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>Symbol    = EURUSD
+Direction = PUT
+Duration  = 60
+Strategy  = my_strategy</pre>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================================
+                 BEST PRACTICES
+                 ==================================================== -->
+
+                <section id="best-practices" data-title="Boas práticas">
+
+                    <h2>Boas práticas</h2>
+
+
+                    <h3>Envie somente novos sinais</h3>
+
+                    <p>
+                        Chame <strong>SendSignal()</strong> quando um novo
+                        sinal for identificado.
+                    </p>
+
+
+                    <h3>Verifique o resultado do envio</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>if(SendSignal(
+    "EURUSD",
+    "CALL",
+    60,
+    "my_strategy"
+))
+{
+    Print("Sinal enviado.");
+}
+else
+{
+    Print("Falha no envio.");
+}</pre>
+
+                    </div>
+
+
+                    <h3>Verifique o resultado de ReceiveSignal()</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                MQL
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>string signal =
+    ReceiveSignal(100);
+
+if(signal == "")
+    return;
+
+// Processar sinal</pre>
+
+                    </div>
+
+
+                    <h3>Direções</h3>
+
+                    <p>
+                        Utilize somente as direções suportadas:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Valores
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>CALL
+PUT</pre>
+
+                    </div>
+
+
+                    <h3>Formato recebido</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Formato
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>SYMBOL,DIRECTION,DURATION,STRATEGY</pre>
+
+                    </div>
+
+
+                    <p>
+                        Exemplo:
+                    </p>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                Exemplo
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>EURUSD,CALL,60,my_strategy</pre>
+
+                    </div>
+
+
+                    <h3>Resumo</h3>
+
+                    <div class="code-wrapper">
+
+                        <div class="code-header">
+                            <span class="code-language">
+                                API
+                            </span>
+
+                            <button class="copy-button">
+                                Copiar
+                            </button>
+                        </div>
+
+                        <pre>SendSignal(...)
+ReceiveSignal(...)</pre>
+
+                    </div>
+
+
+                    <p>
+                        Com essas duas funções você pode enviar e receber
+                        sinais utilizando a X-Bot Lib.
+                    </p>
+
+
+                    <div class="info-card">
+
+                        <div class="info-card-title">
+                            Pronto para integrar
+                        </div>
+
+                        <p>
+                            Instale a biblioteca correspondente à sua
+                            plataforma e utilize as funções documentadas
+                            acima para conectar seu projeto ao X-Bot.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ====================================================
+                 PAGE NAVIGATION
+                 ==================================================== -->
+
+                <div class="page-navigation">
+
+                    <a class="page-nav-card" href="#mql5">
+                        <div class="page-nav-label">
+                            Anterior
+                        </div>
+
+                        <div class="page-nav-title">
+                            MQL5
+                        </div>
+                    </a>
+
+
+                    <a class="page-nav-card next" href="#complete-example">
+                        <div class="page-nav-label">
+                            Próximo
+                        </div>
+
+                        <div class="page-nav-title">
+                            Exemplo completo →
+                        </div>
+                    </a>
+
+                </div>
+
+
+                <footer>
+                    X-Bot Lib · Documentação MetaTrader
+                </footer>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script>
+        /* ================================================================
+           MOBILE SIDEBAR
+           ================================================================ */
+
+        const mobileMenu = document.getElementById("mobileMenu");
+        const sidebar = document.getElementById("sidebar");
+
+        mobileMenu.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+        });
+
+
+        document.querySelectorAll(".nav-link").forEach(link => {
+
+            link.addEventListener("click", () => {
+                sidebar.classList.remove("open");
+            });
+
+        });
+
+
+        /* ================================================================
+           COPY BUTTON
+           ================================================================ */
+
+        document.querySelectorAll(".code-wrapper").forEach(wrapper => {
+
+            const button = wrapper.querySelector(".copy-button");
+            const code = wrapper.querySelector("pre");
+
+            if (!button || !code) {
+                return;
+            }
+
+            button.addEventListener("click", async () => {
+
+                try {
+
+                    await navigator.clipboard.writeText(
+                        code.innerText
+                    );
+
+                    const original = button.innerText;
+
+                    button.innerText = "Copiado";
+                    button.classList.add("copied");
+
+                    setTimeout(() => {
+                        button.innerText = original;
+                        button.classList.remove("copied");
+                    }, 1600);
+
+                } catch (error) {
+
+                    button.innerText = "Erro";
+
+                    setTimeout(() => {
+                        button.innerText = "Copiar";
+                    }, 1600);
+
+                }
+
+            });
+
+        });
+
+
+        /* ================================================================
+           ACTIVE SECTION
+           ================================================================ */
+
+        const sections = document.querySelectorAll(
+            "main section[id]"
+        );
+
+        const navLinks = document.querySelectorAll(
+            ".nav-link"
+        );
+
+        const observer = new IntersectionObserver(
+            entries => {
+
+                entries.forEach(entry => {
+
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    navLinks.forEach(link => {
+                        link.classList.remove("active");
+                    });
+
+                    const active = document.querySelector(
+                        `.nav-link[href="#${entry.target.id}"]`
+                    );
+
+                    if (active) {
+                        active.classList.add("active");
+                    }
+
+                });
+
+            },
+            {
+                rootMargin: "-100px 0px -65% 0px",
+                threshold: 0
+            }
+        );
+
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+
+        /* ================================================================
+           CLOSE SIDEBAR WHEN CLICKING OUTSIDE
+           ================================================================ */
+
+        document.addEventListener("click", event => {
+
+            if (
+                window.innerWidth > 900 ||
+                !sidebar.classList.contains("open")
+            ) {
+                return;
+            }
+
+            if (
+                sidebar.contains(event.target) ||
+                mobileMenu.contains(event.target)
+            ) {
+                return;
+            }
+
+            sidebar.classList.remove("open");
+
+        });
+
+
+        /* ================================================================
+           ESC CLOSE
+           ================================================================ */
+
+        document.addEventListener("keydown", event => {
+
+            if (event.key === "Escape") {
+                sidebar.classList.remove("open");
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>
